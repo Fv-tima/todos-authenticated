@@ -15,6 +15,8 @@ import {
   deleteDoc,
   updateDoc,
   doc,
+  query,
+  where,
 } from "firebase/firestore";
 
 const AuthContext = createContext();
@@ -25,40 +27,45 @@ export function useAuth() {
 
 export const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState({});
-  
+
   const [newInfo, setNewInfo] = useState("");
   const [todosList, setTodosList] = useState([]);
   const todosCollectionRef = collection(db, "TodosData");
+  const users = currentUser?.uid;
+  const t = query(todosCollectionRef, where("userId" ,"==", `${users}`))
 
   const getTodosList = async () => {
     try {
-      const data = await getDocs(todosCollectionRef,{userId:currentUser?.uid});
+      const data = await getDocs(t);
       const filteredData = data.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
-        userId: currentUser?.uid,
       }));
       setTodosList(filteredData);
+      
     } catch (err) {
       console.log(err);
     }
   };
 
-  const delTodos = async (id) => {
-    const todosDoc = doc(db, "TodosData", id);
-    await deleteDoc(todosDoc);
-    getTodosList();
-  };
-
-  const editTodos = async (id)  =>{
-    const todosDoc = doc(db, "TodosData", todo.id);
-    await updateDoc(todosDoc, { info: newInfo });
-  }
-
   useEffect(() => {
     getTodosList();
   }, []);
 
+   
+
+  const delTodos = async (id) => {
+    const todosDoc = doc(db, "TodosData", id);
+    await deleteDoc(todosDoc,);
+    getTodosList();
+   };
+
+  const editTodos = async (id) => {
+    const todosDoc = doc(db, "TodosData", todo.id);
+    await updateDoc(todosDoc, { info: newInfo });
+  };
+
+  
   function signin(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
   }
@@ -87,7 +94,7 @@ export const AuthContextProvider = ({ children }) => {
     setTodosList,
     getTodosList,
     todosCollectionRef,
-    
+
     delTodos,
     editTodos,
     signin,
@@ -96,7 +103,6 @@ export const AuthContextProvider = ({ children }) => {
     signUpWithGoogle,
     setNewInfo,
     newInfo,
-
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

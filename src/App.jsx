@@ -1,5 +1,5 @@
 import {
-  createMemoryRouter,
+  createBrowserRouter ,
   createRoutesFromElements,
   Route,
   RouterProvider,
@@ -13,7 +13,7 @@ import AddTodos from "./components/AddTodos";
 import Header from "./components/Header";
 
 function App() {
-  const router = createMemoryRouter([
+  const router = createBrowserRouter([
     {
       path: "/",
       element: <Login />,

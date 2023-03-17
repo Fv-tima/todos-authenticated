@@ -21,12 +21,12 @@ export default function TodosAcct() {
         <button onClick={logOut}>Logout</button>
       </div>
       <div className="todosContainer">
-        {todosList.length > 0 ? (
+        {todosList.length === 0 ? (
+          <EmptyTodos />
+        ) :(
           <Todos todosList={todosList}
             setTodosList={setTodosList} />
-        ) : (
-          <EmptyTodos />
-        )}
+        ) }
       </div>
       <div className="add">
         <button>
